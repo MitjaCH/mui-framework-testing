@@ -1,14 +1,32 @@
-import React from 'react';
-import { Typography, Button, Grid, Paper, Slider, TextField, Checkbox, FormControlLabel, CircularProgress, IconButton, Alert, Snackbar } from '@mui/material';
-import { PlayCircleOutline as PlayCircleOutlineIcon, PauseCircleOutline as PauseCircleOutlineIcon } from '@mui/icons-material';
+import React, { useRef, useState } from 'react';
+import {
+  Typography,
+  Button,
+  Grid,
+  Paper,
+  Slider,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  CircularProgress,
+  IconButton,
+  Alert,
+  Snackbar
+} from '@mui/material';
+import {
+  PlayCircleOutline as PlayCircleOutlineIcon,
+  PauseCircleOutline as PauseCircleOutlineIcon
+} from '@mui/icons-material';
 import LuminaSlider from '../components/LuminaSlider'
 
 const IndexPage = () => {
-  const [sliderValue, setSliderValue] = React.useState(50);
-  const [checkboxChecked, setCheckboxChecked] = React.useState(false);
-  const [textFieldValue, setTextFieldValue] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [sliderValue, setSliderValue] = useState(50);
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [textFieldValue, setTextFieldValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const handleSliderChange = (event, newValue) => {
     setSliderValue(newValue);
@@ -28,6 +46,16 @@ const IndexPage = () => {
 
   const handleSnackbarToggle = () => {
     setOpenSnackbar(!openSnackbar);
+  };
+
+  const handlePlayPause = () => {
+    if (audioRef.current.paused) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    } else {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
   };
 
   return (
@@ -56,7 +84,6 @@ const IndexPage = () => {
               min={0}
               max={100}
             />
-
             <LuminaSlider/>
             <Typography variant="body2">Value: {sliderValue}</Typography>
           </div>
@@ -87,11 +114,8 @@ const IndexPage = () => {
           </div>
           <div style={{ marginBottom: '20px' }}>
             <Typography variant="h6">Icons:</Typography>
-            <IconButton color="primary">
-              <PlayCircleOutlineIcon />
-            </IconButton>
-            <IconButton color="primary">
-              <PauseCircleOutlineIcon />
+            <IconButton color="primary" onClick={handlePlayPause}>
+              {isPlaying ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
             </IconButton>
           </div>
           <div style={{ marginBottom: '20px' }}>
@@ -108,6 +132,7 @@ const IndexPage = () => {
           <Button variant="contained" color="primary" href="https://mui.com/" target="_blank" rel="noopener noreferrer">
             Learn More
           </Button>
+          <audio ref={audioRef} src="/audio.mp3" />
         </Paper>
       </Grid>
     </Grid>
